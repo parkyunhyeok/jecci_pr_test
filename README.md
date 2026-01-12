@@ -458,7 +458,7 @@
         <div class="two">
           <label>
             내 이름(필수)
-            <input id="staffName" placeholder="예: 홍길동" />
+            <input id="staffName" placeholder="예: 박윤혁" />
           </label>
           <label>
             내 연락처(필수)
@@ -516,14 +516,14 @@
             </label>
 
             <label>
-              보도용 사진 업로드(필수)
+              보도용 사진 업로드(필수: 업로드 또는 링크, 여러 장 가능)
               <input id="imageFiles" type="file" accept="image/*" multiple />
               <span class="small" id="imgHelp"></span>
             </label>
           </div>
 
           <label>
-            대용량 파일 전달 링크
+            대용량 파일 전달 링크(Agit/드라이브 등, 사진이 없으면 필수)
             <textarea id="bigFileLinks" placeholder="예) https://drive.google.com/...&#10;예) https://agit..."></textarea>
           </label>
 
@@ -546,8 +546,8 @@
 
         <div class="searchBar">
           <label>
-            검색(작성자, 제목 등)
-            <input id="boardSearch" placeholder="예: 홍길동, 오픈그라운드..." />
+            검색(제목/작성자/상태/날짜)
+            <input id="boardSearch" placeholder="예: 1월, 박윤혁, 배포 예정, 오픈그라운드..." />
           </label>
           <button class="btn primary" id="btnSearch" type="button">검색</button>
           <button class="btn" id="btnClearSearch" type="button">초기화</button>
