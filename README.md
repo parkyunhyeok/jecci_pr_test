@@ -5,9 +5,6 @@
   <meta name="google" content="notranslate">
   <title>JCCEI 보도자료 캘린더 MVP</title>
 
-  <!-- Excel(.xlsx) 생성용 (SheetJS CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
-
   <style>
     :root{
       --bg:#f6f7fb;
@@ -104,6 +101,42 @@
     }
     .item .top{display:flex; justify-content:space-between; gap:10px; align-items:flex-start; min-width:0;}
     .item .t{font-weight:950; min-width:0; overflow-wrap:anywhere;}
+
+    /* ✅ 본문/사이드 정렬 개선 */
+    .pressLayout{
+      display:grid;
+      grid-template-columns: 2fr 1fr;
+      gap:12px;
+      align-items:start;
+    }
+    .pressSide{
+      display:grid;
+      gap:10px;
+      min-width:0;
+    }
+    @media (max-width: 980px){
+      .pressLayout{grid-template-columns: 1fr;}
+    }
+
+    /* ✅ 본문 크게 + 가독성 */
+    #body{
+      min-height: 560px;
+      font-size: 16px;
+      line-height: 1.75;
+      padding: 14px;
+    }
+
+    .sideBox{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#f8fafc;
+      padding:12px;
+    }
+    .sideBox .hd{
+      font-weight:950;
+      color:#0f172a;
+      margin-bottom:8px;
+    }
 
     /* Calendar */
     .calendar{
@@ -278,17 +311,6 @@
     }
     .searchBar label{min-width:240px; flex:1;}
 
-    /* ✅ 엑셀(보드로 이동) */
-    .exportBarBoard{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-end;
-      margin:8px 0 10px;
-    }
-    .exportBarBoard label{min-width:200px; flex:1;}
-    .exportBarBoard .btn{white-space:nowrap;}
-
     details > summary{list-style:none;}
     details > summary::-webkit-details-marker{display:none;}
     .summaryBtn{
@@ -382,13 +404,11 @@
         <button class="tab" data-view="settings" id="tabSettings">설정</button>
       </div>
       <div class="row">
-        <!-- ✅ 다중 관리자 코드: 선택한 관리자 기준 힌트 -->
         <span class="pill">선택한 관리자 코드: <span class="mono" id="adminCodeHint"></span></span>
       </div>
     </div>
   </div>
 
-  <!-- ✅ 안내문구는 한 곳에 모아 노출 -->
   <div class="card" id="guideBox" style="margin-top:14px;">
     <div class="row" style="justify-content:space-between;">
       <h2 style="margin:0;">안내</h2>
@@ -411,31 +431,34 @@
         <h2>보도자료 신청</h2>
 
         <div class="two">
-           <label class="required">
-            <span style="font-weight: normal;">내 이름</span>
-            <span class="reqMark">*</span>
-            <input id="staffName" placeholder="예: 홍길동" />
-            <div class="errorText" id="err_staffName"></div>
-          </label>
           <label class="required">
-          <span style="font-weight: normal;">내 연락처</span>
-          <span class="reqMark">*</span>
-          <input id="staffPhone" placeholder="예: 010-1234-5678" />
-          <div class="errorText" id="err_staffPhone"></div>
-        </label>
+            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+              내 이름 <span class="reqMark">*</span>
+            </span>
+            <input id="staffName" placeholder="예: 홍길동" />
+          </label>
+
+          <label class="required">
+            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+              내 연락처 <span class="reqMark">*</span>
+            </span>
+            <input id="staffPhone" placeholder="예: 010-1234-5678" />
+          </label>
         </div>
 
         <div class="two" style="margin-top:10px;">
           <label class="required">
-            이메일 <span class="reqMark">*</span>
+            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+              이메일 <span class="reqMark">*</span>
+            </span>
             <input id="staffEmail" placeholder="예: example@jccei.kr" />
-            <div class="errorText" id="err_staffEmail"></div>
           </label>
 
           <label class="required">
-            승인 관리자 <span class="reqMark">*</span>
+            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+              승인 관리자 <span class="reqMark">*</span>
+            </span>
             <select id="approver"></select>
-            <div class="errorText" id="err_approver"></div>
           </label>
         </div>
 
@@ -443,9 +466,10 @@
 
         <form id="formSubmit" class="list">
           <label class="required">
-            제목 <span class="reqMark">*</span>
+            <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+              제목 <span class="reqMark">*</span>
+            </span>
             <input id="title" required placeholder="예: 제주창조경제혁신센터, ○○ 프로그램 성료" />
-            <div class="errorText" id="err_title"></div>
           </label>
 
           <label>
@@ -453,29 +477,39 @@
             <input id="subtitle" placeholder="예: 도내 스타트업 20개사 참여…" />
           </label>
 
-          <div class="row" style="justify-content:space-between; align-items:flex-start;">
-            <label class="required" style="flex:1; min-width:260px;">
-              본문 <span class="reqMark">*</span>
-              <textarea id="body" required></textarea>
-              <div class="errorText" id="err_body"></div>
-            </label>
-            <div style="width:180px; min-width:180px;">
-              <button class="btn small" type="button" id="btnInsertTips">작성팁 예시 넣기</button>
-              <div class="small" style="margin-top:6px;">※ 클릭 시 본문에 템플릿이 자동 입력됩니다.</div>
-            </div>
-          </div>
-
-          <div class="two">
-            <label class="required">
-              배포 희망일 <span class="reqMark">*</span>
-              <input id="desiredDate" type="date" required />
-              <div class="errorText" id="err_desiredDate"></div>
-              <span class="small">※ 승인된 날짜/주말/공휴일/3영업일 이내는 선택 불가</span>
+          <!-- ✅ 본문(크게) + 우측 사이드(작성팁/배포희망일/캘린더) -->
+          <div class="pressLayout">
+            <label class="required" style="min-width:0;">
+              <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+                본문 <span class="reqMark">*</span>
+              </span>
+              <textarea id="body" required rows="12"></textarea>
             </label>
 
-            <div style="min-width:0;">
-              <button class="btn" type="button" id="btnOpenCalendar">캘린더 열기</button>
-              <div class="small" style="margin-top:6px;">※ 캘린더에서 날짜를 누르면 희망일이 자동 입력됩니다.</div>
+            <div class="pressSide">
+              <div class="sideBox">
+                <div class="hd">작성 보조</div>
+                <button class="btn small" type="button" id="btnInsertTips">작성팁 넣기</button>
+                <div class="small" style="margin-top:8px;">※ 클릭 시 본문에 템플릿이 자동 입력됩니다.</div>
+              </div>
+
+              <div class="sideBox">
+                <div class="hd">배포 일정</div>
+
+                <label class="required" style="margin:0;">
+                  <span style="display:inline-flex; align-items:center; gap:4px; font-weight:normal;">
+                    배포 희망일 <span class="reqMark">*</span>
+                  </span>
+                  <input id="desiredDate" type="date" required />
+                  <div class="errorText" id="err_desiredDate"></div>
+                  <span class="small">※ 주말 제외 배포 3일전 신청</span>
+                </label>
+
+                <div style="margin-top:10px;">
+                  <button class="btn" type="button" id="btnOpenCalendar">캘린더 열기</button>
+                  <div class="small" style="margin-top:6px;">※ 캘린더에서 날짜를 누르면 희망일이 자동 입력됩니다.</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -515,21 +549,8 @@
 
         <h2>배포 예정/대기 현황</h2>
 
-        <!-- ✅ 엑셀(보드로 이동): "배포된(승인)" 건만 기간 내 다운로드 -->
-        <div class="exportBarBoard">
-          <label>
-            엑셀 기간 시작
-            <input id="exportFrom" type="date">
-          </label>
-          <label>
-            엑셀 기간 종료
-            <input id="exportTo" type="date">
-          </label>
-          <button class="btn primary" id="btnExportXlsx" type="button">엑셀 내려받기</button>
-          <span class="small">※ 기간 내 <b>배포 예정(승인)</b> 보도자료 목록만 내려받습니다.</span>
-        </div>
+        <!-- ✅ 엑셀 기간/내려받기 기능: 요청에 따라 제거(비활성화) -->
 
-        <!-- ✅ 검색: 버튼을 눌러 실행 -->
         <div class="searchBar">
           <label>
             검색(제목/작성자/상태/날짜)
@@ -565,7 +586,6 @@
       <div id="view_admin" class="hidden">
         <h2>관리자 승인/반려</h2>
 
-        <!-- ✅ "내 관리자" 선택 + 패스코드 (관리자별 코드) -->
         <div class="two">
           <label class="required">
             내 관리자 이름 <span class="reqMark">*</span>
@@ -714,7 +734,7 @@
   </div>
 </dialog>
 
-<!-- ✅ 관리자 첨삭 모달 (요구사항 반영: 대용량 링크 삭제) -->
+<!-- ✅ 관리자 첨삭 모달 (대용량 링크 삭제) -->
 <dialog id="dlgEditAdmin">
   <div class="modalHead">
     <div class="modalTitle">관리자 첨삭/수정</div>
@@ -921,10 +941,6 @@ const boardSearch = el("boardSearch");
 const btnDoSearch = el("btnDoSearch");
 const btnClearSearch = el("btnClearSearch");
 
-const exportFrom = el("exportFrom");
-const exportTo = el("exportTo");
-const btnExportXlsx = el("btnExportXlsx");
-
 const btnInsertTips = el("btnInsertTips");
 const imgHelp = el("imgHelp");
 
@@ -1054,7 +1070,6 @@ function activateTab(view){
   viewStaff.classList.toggle("hidden", view!=="staff");
   viewAdmin.classList.toggle("hidden", view!=="admin");
   viewSettings.classList.toggle("hidden", view!=="settings");
-  // ✅ 승인 탭으로 이동 시, 리스트를 현재 관리자 기준으로 다시 그리기
   if(view==="admin") renderLists();
 }
 tabs.forEach(t=>{
@@ -1285,7 +1300,6 @@ function renderLists(){
   const mine = name ? data.press.filter(p => p.authorName === name).sort((a,b)=>b.createdAt-a.createdAt) : [];
   myList.innerHTML = mine.length ? mine.map(p => pressCard(p, {admin:false, mine:true})).join("") : `<div class="muted">이름을 입력하면 내 신청 목록이 보입니다.</div>`;
 
-  // ✅ 관리자: 본인을 승인관리자로 지정한 건만
   const who = currentAdmin();
   const adminScope = who ? (p)=> p.approver === who : ()=>false;
 
@@ -1351,7 +1365,7 @@ function renderBoardTable(){
   bindBoardActions();
 }
 
-/** 다운로드: DOC(워드 호환) - 요구사항 반영
+/** 다운로드: DOC(워드 호환)
  * - 승인관리자 표시 제거
  * - 사진은 실제 이미지 대신 "보도용 사진 n장 별첨" 문구만 표기
  */
@@ -1517,8 +1531,6 @@ function pressCard(p, {admin, mine}){
 
   const canUserEdit = mine && (p.status==="SUBMITTED" || p.status==="REJECTED");
   const userEditBtn = canUserEdit ? `<button class="btn small" data-act="userEdit" data-id="${p.id}">수정</button>` : "";
-
-  // ✅ 관리자 첨삭 버튼: 대기중 + 본인 승인관리자만(렌더 단계에서 이미 필터링, 추가 안전)
   const adminEditBtn = admin ? `<button class="btn small" data-act="adminEdit" data-id="${p.id}">첨삭/수정</button>` : "";
 
   const adminBtns = admin ? `
@@ -1610,17 +1622,16 @@ function getAdminInput(id, act){
   return elx ? elx.value : "";
 }
 function adminGuard(){
-  // ✅ 필수 체크
   clearFieldError(adminWho);
   clearFieldError(adminPass);
 
-  const who = (adminWho.value || "").trim();
-  const pass = (adminPass.value || "").trim();
   let ok = true;
   ok = requireValue(adminWho, "내 관리자 이름을 선택해주세요.") && ok;
   ok = requireValue(adminPass, "패스코드를 입력해주세요.") && ok;
   if(!ok) return false;
 
+  const who = (adminWho.value || "").trim();
+  const pass = (adminPass.value || "").trim();
   const expected = settings.adminCodes[who];
   if(pass !== expected){
     alert("관리자 패스코드가 올바르지 않습니다.");
@@ -1672,7 +1683,6 @@ function adminEditSave(){
     return;
   }
 
-  // ✅ 관리자 첨삭에서 '대용량 링크'는 수정 불가(삭제 요구사항)
   const before = {
     title: p.title || "",
     subtitle: p.subtitle || "",
@@ -1688,7 +1698,7 @@ function adminEditSave(){
 
   const changes = diffChanges(
     { ...before, bigFileLinks: p.bigFileLinks || "" },
-    { ...after,  bigFileLinks: p.bigFileLinks || "" } // 링크 변경 없음
+    { ...after,  bigFileLinks: p.bigFileLinks || "" }
   );
 
   pushHistory(p, "admin", changes);
@@ -1720,7 +1730,6 @@ function adminEditSave(){
 - 상태: 대기중(접수)
 ※ ‘내 신청 목록’에서 “변경 내역 보기”를 누르면 수정된 부분(전/후)을 확인할 수 있습니다.`;
 
-  // ✅ 요구사항: 첨삭 저장 시 "저장 완료" 안내 + 자동 닫기
   showToast("첨삭 저장 완료");
   dlgEditAdmin.close();
 }
@@ -2131,73 +2140,6 @@ btnResetAdmin.addEventListener("click", ()=>{
   showToast("초기화 완료");
 });
 
-/** ✅ 엑셀 내보내기(보드로 이동): 기간 내 "배포 예정(승인)"만 */
-btnExportXlsx.onclick = ()=>{
-  const fromStr = exportFrom.value;
-  const toStr = exportTo.value;
-
-  if(!fromStr || !toStr){
-    alert("엑셀 기간 시작/종료 날짜를 모두 선택해주세요.");
-    return;
-  }
-  if(fromStr > toStr){
-    alert("기간이 올바르지 않습니다. 시작일이 종료일보다 늦습니다.");
-    return;
-  }
-
-  const from = parseYMD(fromStr);
-  const to = parseYMD(toStr);
-  to.setHours(23,59,59,999);
-
-  const rows = data.press
-    .filter(p=> p.status === "APPROVED" && p.approvedDate)
-    .filter(p=>{
-      const ad = parseYMD(p.approvedDate);
-      return ad >= from && ad <= to;
-    })
-    .slice()
-    .sort((a,b)=> (a.approvedDate||"").localeCompare(b.approvedDate||""));
-
-  if(rows.length === 0){
-    alert("해당 기간에 배포 예정(승인) 보도자료가 없습니다.");
-    return;
-  }
-
-  const aoa = [];
-  aoa.push([
-    "배포일", "제목", "부제목", "작성자", "연락처", "이메일", "승인관리자",
-    "희망일", "사진장수", "대용량 링크", "수정기록(건수)"
-  ]);
-
-  rows.forEach(p=>{
-    aoa.push([
-      p.approvedDate || "",
-      p.title || "",
-      p.subtitle || "",
-      p.authorName || "",
-      p.authorPhone || "",
-      p.authorEmail || "",
-      p.approver || "",
-      p.desiredDate || "",
-      (p.images && p.images.length) ? p.images.length : 0,
-      (p.bigFileLinks || "").replace(/\n/g, " "),
-      (p.editHistory && p.editHistory.length) ? p.editHistory.length : 0
-    ]);
-  });
-
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws["!cols"] = [
-    {wch:12},{wch:50},{wch:32},{wch:12},{wch:16},{wch:22},{wch:14},
-    {wch:12},{wch:10},{wch:40},{wch:14}
-  ];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "배포(승인)");
-
-  const filename = `배포예정_보도자료_${fromStr}_~_${toStr}.xlsx`;
-  XLSX.writeFile(wb, filename);
-  showToast(`엑셀 다운로드 완료: ${filename}`);
-};
-
 /** 모달 이벤트 */
 dlgEditUserClose.onclick = ()=> dlgEditUser.close();
 uEditCancel.onclick = ()=> dlgEditUser.close();
@@ -2239,7 +2181,6 @@ btnToggleGuide.addEventListener("click", ()=>{
 
 /** 승인 탭에서 관리자/패스 변경 시 즉시 리스트 갱신 */
 adminWho.addEventListener("change", ()=>{ setHints(); renderLists(); });
-adminPass.addEventListener("input", ()=>{ /* 입력 중엔 굳이 렌더 X */ });
 
 /** 초기 렌더 */
 renderCalendar();
