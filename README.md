@@ -411,16 +411,18 @@
         <h2>보도자료 신청</h2>
 
         <div class="two">
-          <label class="required">
-            내 이름 <span class="reqMark">*</span>
-            <input id="staffName" placeholder="예: 박윤혁" />
+           <label class="required">
+            <span style="font-weight: normal;">내 이름</span>
+            <span class="reqMark">*</span>
+            <input id="staffName" placeholder="예: 홍길동" />
             <div class="errorText" id="err_staffName"></div>
           </label>
           <label class="required">
-            내 연락처 <span class="reqMark">*</span>
-            <input id="staffPhone" placeholder="예: 010-1234-5678" />
-            <div class="errorText" id="err_staffPhone"></div>
-          </label>
+          <span style="font-weight: normal;">내 연락처</span>
+          <span class="reqMark">*</span>
+          <input id="staffPhone" placeholder="예: 010-1234-5678" />
+          <div class="errorText" id="err_staffPhone"></div>
+        </label>
         </div>
 
         <div class="two" style="margin-top:10px;">
